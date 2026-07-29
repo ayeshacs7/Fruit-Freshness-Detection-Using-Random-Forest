@@ -129,29 +129,24 @@ python train_model.py
 
 ## 📷 Results
 
-The project automatically generates:
+### Model Comparison
 
-- comparison_results.csv
-- model_comparison.png
-- random_forest_confusion_matrix.png
-- decision_tree_confusion_matrix.png
-- logistic_regression_confusion_matrix.png
-- best_model.pkl
+![Model Comparison](screenshots/model_comparison.png)
 
 ---
 
-## 👩‍💻 Author
+### Random Forest Confusion Matrix
 
-**Ayesha Shafiq**
-
-Machine Learning & Computer Vision Enthusiast
+![Random Forest Confusion Matrix](screenshots/random_forest_confusion_matrix.png)
 
 ---
 
-## ⭐ Future Improvements
+### Decision Tree Confusion Matrix
 
-- Deep Learning (CNN)
-- Transfer Learning
-- Mobile Deployment
-- Real-time Camera Prediction
-- More Fruit Categories
+![Decision Tree Confusion Matrix](screenshots/decision_tree_confusion_matrix.png)
+
+---
+
+### Logistic Regression Confusion Matrix
+
+![Logistic Regression Confusion Matrix](screenshots/logistic_regression_confusion_matrix.png)

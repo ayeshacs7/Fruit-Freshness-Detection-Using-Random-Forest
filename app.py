@@ -14,7 +14,7 @@ st.set_page_config(
 )
 # Display the application title and user instructions.
 st.title("🍎 Fruit Freshness Detection")
-st.write("Upload an image of Apple, Banana or Strawberry.")
+st.write("Upload a fruit image to predict whether it is Fresh or Rotten.")
 
 # Load the trained machine learning model.
 # Stop the application if loading fails.

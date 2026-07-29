@@ -1,24 +1,70 @@
 # ==========================================================
-# Project : Fruit Freshness Detection using Random Forest
+# Project : Fruit Freshness Detection using Machine Learning
 # Author  : Ayesha Shafiq
 # File    : train_model.py
 # Purpose :
-# This module loads the dataset, trains the Random Forest
-# classifier, evaluates its performance, and saves the
-# trained model along with its metadata.
+# This module loads the dataset, trains multiple
+# machine learning models, compares their
+# performance, selects the best-performing model,
+# and saves it for deployment.
 # ==========================================================
 # Import required libraries.
 import os
 import joblib
-# Import the Random Forest machine learning algorithm.
-from sklearn.ensemble import RandomForestClassifier
-# Import evaluation metrics.
-from sklearn.metrics import accuracy_score, classification_report
+# Import plotting and data analysis libraries.
+import matplotlib.pyplot as plt
+import pandas as pd
 # Import function to split the dataset.
 from sklearn.model_selection import train_test_split
 # Import custom dataset loader and model utilities.
 from utils.dataset_loader import load_dataset
 from utils.model_utils import save_model, save_metadata
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    classification_report,
+    confusion_matrix,
+    ConfusionMatrixDisplay
+)
+# ==========================================================
+# Save Confusion Matrix
+# ==========================================================
+def save_confusion_matrix(y_true, y_pred, algorithm):
+
+    # Create confusion matrix.
+    cm = confusion_matrix(y_true, y_pred)
+
+    # Display confusion matrix.
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+
+    disp.plot(cmap="Blues")
+
+    plt.title(f"{algorithm} Confusion Matrix")
+
+    plt.savefig(
+        f"{algorithm.lower().replace(' ', '_')}_confusion_matrix.png",
+        dpi=300,
+        bbox_inches="tight"
+    )
+
+    plt.close()
+
+    filename = f"{algorithm.lower().replace(' ', '_')}_confusion_matrix.png"
+
+    plt.savefig(
+    filename,
+    dpi=300,
+    bbox_inches="tight"
+)
+
+    plt.close()
+
+    print(f"Saved: {filename}")
 # ============================
 # Configuration
 # ============================
@@ -48,30 +94,294 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=RANDOM_STATE,
     stratify=y
 )
+# Store the performance of all machine learning models.
+results = []
 # Display a message indicating the start of model training.
-print("\nTraining Random Forest Model...")
-# Create a Random Forest classifier.
-# Multiple decision trees are combined to improve prediction accuracy.
-model = RandomForestClassifier(
-    n_estimators=300,
-    random_state=RANDOM_STATE,
-    n_jobs=-1
+# ==========================================================
+# Train Random Forest Model
+# ==========================================================
+def train_random_forest(X_train, X_test, y_train, y_test):
+
+    print("\nTraining Random Forest Model...")
+
+    # Create the classifier.
+    model = RandomForestClassifier(
+        n_estimators=300,
+        random_state=RANDOM_STATE,
+        n_jobs=-1
+    )
+
+    # Train the model.
+    model.fit(X_train, y_train)
+
+    # Predict testing data.
+    predictions = model.predict(X_test)
+    save_confusion_matrix(
+    y_test,
+    predictions,
+    "Random Forest"
 )
-# Train the model using the extracted image features.
-model.fit(X_train, y_train)
-# Generate predictions for the testing dataset.
-predictions = model.predict(X_test)
-# Calculate the overall classification accuracy.
-accuracy = accuracy_score(y_test, predictions)
-# Display the model accuracy.
-print(f"\nAccuracy: {accuracy * 100:.2f}%\n")
-# Display detailed performance metrics
-# including precision, recall and F1-score.
-print(classification_report(y_test, predictions))
-# Save the trained machine learning model for future predictions.
-save_model(model)
-# Save additional model information such as accuracy and algorithm name.
-save_metadata(
-    accuracy=accuracy,
-    algorithm="Random Forest"
+    # Calculate evaluation metrics.
+    accuracy = accuracy_score(y_test, predictions)
+
+    precision = precision_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    recall = recall_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    f1 = f1_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    print(f"\nAccuracy: {accuracy * 100:.2f}%\n")
+
+    print(classification_report(y_test, predictions))
+
+    return (
+        model,
+        accuracy,
+        precision,
+        recall,
+        f1,
+        predictions
+    )
+rf_model, rf_accuracy, rf_precision, rf_recall, rf_f1, rf_predictions = train_random_forest(
+    X_train,
+    X_test,
+    y_train,
+    y_test
 )
+
+results.append({
+    "Algorithm": "Random Forest",
+    "Accuracy": rf_accuracy,
+    "Precision": rf_precision,
+    "Recall": rf_recall,
+    "F1-Score": rf_f1,
+    "Model": rf_model
+})
+# ==========================================================
+# Train Decision Tree Model
+# ==========================================================
+def train_decision_tree(X_train, X_test, y_train, y_test):
+
+    print("\nTraining Decision Tree Model...")
+
+    model = DecisionTreeClassifier(
+        random_state=RANDOM_STATE
+    )
+
+    model.fit(X_train, y_train)
+
+    predictions = model.predict(X_test)
+    save_confusion_matrix(
+    y_test,
+    predictions,
+    "Decision Tree"
+)
+    accuracy = accuracy_score(y_test, predictions)
+
+    precision = precision_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    recall = recall_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    f1 = f1_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    print(f"\nDecision Tree Accuracy: {accuracy * 100:.2f}%\n")
+
+    print(classification_report(y_test, predictions))
+
+    return (
+        model,
+        accuracy,
+        precision,
+        recall,
+        f1,
+        predictions
+    )
+dt_model, dt_accuracy, dt_precision, dt_recall, dt_f1, dt_predictions = train_decision_tree(
+    X_train,
+    X_test,
+    y_train,
+    y_test
+)
+
+results.append({
+    "Algorithm": "Decision Tree",
+    "Accuracy": dt_accuracy,
+    "Precision": dt_precision,
+    "Recall": dt_recall,
+    "F1-Score": dt_f1,
+    "Model": dt_model
+})
+# ==========================================================
+# Train Logistic Regression Model
+# ==========================================================
+def train_logistic_regression(X_train, X_test, y_train, y_test):
+
+    print("\nTraining Logistic Regression Model...")
+
+    # Create the classifier.
+    model = LogisticRegression(
+        random_state=RANDOM_STATE,
+        max_iter=1000
+    )
+
+    # Train the model.
+    model.fit(X_train, y_train)
+
+    # Predict testing data.
+    predictions = model.predict(X_test)
+    save_confusion_matrix(
+    y_test,
+    predictions,
+    "Logistic Regression"
+)
+    # Calculate evaluation metrics.
+    accuracy = accuracy_score(y_test, predictions)
+
+    precision = precision_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    recall = recall_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    f1 = f1_score(
+        y_test,
+        predictions,
+        average="weighted",
+        zero_division=0
+    )
+
+    print(f"\nLogistic Regression Accuracy: {accuracy * 100:.2f}%\n")
+
+    print(classification_report(y_test, predictions))
+
+    return (
+        model,
+        accuracy,
+        precision,
+        recall,
+        f1,
+        predictions
+    )
+# Train Logistic Regression model.
+lr_model, lr_accuracy, lr_precision, lr_recall, lr_f1, lr_predictions = train_logistic_regression(
+    X_train,
+    X_test,
+    y_train,
+    y_test
+)
+
+# Store Logistic Regression results.
+results.append({
+    "Algorithm": "Logistic Regression",
+    "Accuracy": lr_accuracy,
+    "Precision": lr_precision,
+    "Recall": lr_recall,
+    "F1-Score": lr_f1,
+    "Model": lr_model
+})
+
+print(results)
+print("\n==============================")
+print(" Model Comparison")
+print("==============================")
+
+for result in results:
+    print(f"{result['Algorithm']}: {result['Accuracy']:.4f}")
+
+    # Create a DataFrame containing model comparison results.
+comparison_df = pd.DataFrame(results)
+
+# Remove the model object before saving the CSV file.
+comparison_df = comparison_df.drop(columns=["Model"])
+
+# Save the comparison results.
+comparison_df.to_csv(
+    "comparison_results.csv",
+    index=False
+)
+
+print("\nComparison results saved as comparison_results.csv")
+
+# Create a bar chart comparing model accuracies.
+plt.figure(figsize=(8, 5))
+
+plt.bar(
+    comparison_df["Algorithm"],
+    comparison_df["Accuracy"]
+)
+
+plt.title("Model Accuracy Comparison")
+plt.xlabel("Algorithm")
+plt.ylabel("Accuracy")
+
+plt.ylim(0, 1)
+
+plt.savefig(
+    "model_comparison.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.close()
+
+print("Model comparison graph saved successfully!")
+
+# ==========================================================
+# Select Best Model
+# ==========================================================
+best_model = max(
+    results,
+    key=lambda x: x["Accuracy"]
+)
+
+print("\n==============================")
+print(" Best Model")
+print("==============================")
+
+print(f"Accuracy  : {best_model['Accuracy']:.4f}")
+
+# Save the best-performing model.
+joblib.dump(
+    best_model["Model"],
+    "model/best_model.pkl"
+)
+print(f"Algorithm : {best_model['Algorithm']}")
+print("\nBest model saved successfully!")

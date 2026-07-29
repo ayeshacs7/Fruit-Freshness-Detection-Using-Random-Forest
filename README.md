@@ -131,22 +131,16 @@ python train_model.py
 
 ### Model Comparison
 
-![Model Comparison](screenshots/model_comparison.png)
-
----
+![Model Comparison](model_comparison.png)
 
 ### Random Forest Confusion Matrix
 
-![Random Forest Confusion Matrix](screenshots/random_forest_confusion_matrix.png)
-
----
+![Random Forest Confusion Matrix](random_forest_confusion_matrix.png)
 
 ### Decision Tree Confusion Matrix
 
-![Decision Tree Confusion Matrix](screenshots/decision_tree_confusion_matrix.png)
-
----
+![Decision Tree Confusion Matrix](decision_tree_confusion_matrix.png)
 
 ### Logistic Regression Confusion Matrix
 
-![Logistic Regression Confusion Matrix](screenshots/logistic_regression_confusion_matrix.png)
+![Logistic Regression Confusion Matrix](logistic_regression_confusion_matrix.png)

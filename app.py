@@ -62,7 +62,7 @@ if uploaded_file is not None:
 # Convert extracted features into the format expected by the model.
             features = np.array(features).reshape(1, -1)
 
-# Predict the freshness class of the uploaded fruit image.
+# Predict the fruit freshness using the best trained model.
             prediction = model.predict(features)[0]
 # Convert the predicted label into a readable class name.
             result = CLASS_NAMES.get(prediction, "Unknown")

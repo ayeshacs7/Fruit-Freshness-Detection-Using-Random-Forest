@@ -36,33 +36,24 @@ from sklearn.metrics import (
 # ==========================================================
 def save_confusion_matrix(y_true, y_pred, algorithm):
 
-    # Create confusion matrix.
     cm = confusion_matrix(y_true, y_pred)
 
-    # Display confusion matrix.
+    fig, ax = plt.subplots(figsize=(6, 6))
+
     disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot(cmap="Blues", ax=ax, colorbar=False)
 
-    disp.plot(cmap="Blues")
+    ax.set_title(f"{algorithm} Confusion Matrix")
 
-    plt.title(f"{algorithm} Confusion Matrix")
+    filename = f"{algorithm.lower().replace(' ', '_')}_confusion_matrix.png"
 
-    plt.savefig(
-        f"{algorithm.lower().replace(' ', '_')}_confusion_matrix.png",
+    fig.savefig(
+        filename,
         dpi=300,
         bbox_inches="tight"
     )
 
-    plt.close()
-
-    filename = f"{algorithm.lower().replace(' ', '_')}_confusion_matrix.png"
-
-    plt.savefig(
-    filename,
-    dpi=300,
-    bbox_inches="tight"
-)
-
-    plt.close()
+    plt.close(fig)
 
     print(f"Saved: {filename}")
 # ============================

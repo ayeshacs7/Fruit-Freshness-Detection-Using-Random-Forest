@@ -138,9 +138,23 @@ python train_model.py
 ![Random Forest Confusion Matrix](random_forest_confusion_matrix.png)
 
 ### Decision Tree Confusion Matrix
+![Decision Tree Confusion matrix](decision_tree_confusion_matrix.png)
 
-![Decision Tree Confusion Matrix](decision_tree_confusion_matrix.png)
 
 ### Logistic Regression Confusion Matrix
 
+
 ![Logistic Regression Confusion Matrix](logistic_regression_confusion_matrix.png)
+---
+
+## 👩‍💻 Author
+
+**Ayesha Shafique**
+
+GitHub: https://github.com/ayeshacs7
+
+---
+
+## 📄 License
+
+This project is developed for educational and portfolio purposes.
